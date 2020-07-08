@@ -7,13 +7,15 @@ import {
   Modal,
   StyleSheet,
   Dimensions,
+  ImageBackground,
 } from "react-native";
 import { Camera } from "expo-camera";
 import Slider from "@react-native-community/slider";
 import * as MediaLibrary from "expo-media-library";
 
-const windowWidth = Dimensions.get("window").width / 1.5;
-const windowHeight = Dimensions.get("window").height / 2;
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height / 1.5;
+
 export default class App extends React.Component {
   state = {
     hasCameraPermission: null,
@@ -23,6 +25,7 @@ export default class App extends React.Component {
     uriImage: "",
     modalVisible: false,
     zoomValue: 0,
+    indexZoom: [0, 1, 2, 3, 4, 5],
   };
 
   async componentDidMount() {
@@ -95,16 +98,98 @@ export default class App extends React.Component {
             animationType="slide"
             transparent={true}
             visible={this.state.modalVisible}
-            onRequestClose={() => {
-              Alert.alert("Modal has been closed.");
-            }}
           >
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
-                <Image
+                <ImageBackground
                   source={{ uri: this.state.uriImage }}
-                  style={{ height: windowHeight, width: windowWidth }}
-                />
+                  style={{
+                    height: windowHeight,
+                    width: windowWidth,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <View
+                    style={{
+                      flex: 1,
+                      backgroundColor: "transparent",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      position: "absolute",
+                      zIndex: 1,
+                      top: 0,
+                      right: 0,
+                      left: 0,
+                      bottom: 0,
+                    }}
+                  >
+                    <View
+                      style={{
+                        height: 20,
+                        width: 200,
+                        borderBottomWidth: 1,
+                        borderColor: "blue",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      {this.state.indexZoom.map((value, key) => {
+                        let zoomValue = this.state.zoomValue;
+                        if (zoomValue === 0) {
+                          return (
+                            <Text key={key} style={{ color: "blue" }}>
+                              {value}
+                            </Text>
+                          );
+                        } else {
+                          return (
+                            <Text key={key} style={{ color: "blue" }}>
+                              {value * zoomValue}
+                            </Text>
+                          );
+                        }
+                      })}
+                    </View>
+                    <View
+                      style={{
+                        height: 200,
+                        width: 20,
+                        borderRightWidth: 1,
+                        borderColor: "red",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      {this.state.indexZoom.map((value, key) => {
+                        let zoomValue = this.state.zoomValue;
+                        if (zoomValue === 0) {
+                          return (
+                            <Text key={key} style={{ color: "red" }}>
+                              {value}
+                            </Text>
+                          );
+                        } else {
+                          return (
+                            <Text key={key} style={{ color: "red" }}>
+                              {value * zoomValue}
+                            </Text>
+                          );
+                        }
+                      })}
+                    </View>
+                    <Text
+                      style={{
+                        marginTop: 30,
+                        color: "white",
+                      }}
+                    >
+                      PHOTO SCALE 1 :{" "}
+                      {this.state.zoomValue === 0
+                        ? 10
+                        : 10 / this.state.zoomValue}
+                    </Text>
+                  </View>
+                </ImageBackground>
                 <TouchableOpacity
                   style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                   onPress={() => {
@@ -124,7 +209,89 @@ export default class App extends React.Component {
             ref={(ref) => {
               this.camera = ref;
             }}
-          ></Camera>
+          >
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: "transparent",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor: "transparent",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <View
+                  style={{
+                    height: 20,
+                    width: 200,
+                    borderBottomWidth: 1,
+                    borderColor: "blue",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  {this.state.indexZoom.map((value, key) => {
+                    let zoomValue = this.state.zoomValue;
+                    if (zoomValue === 0) {
+                      return (
+                        <Text key={key} style={{ color: "blue" }}>
+                          {value}
+                        </Text>
+                      );
+                    } else {
+                      return (
+                        <Text key={key} style={{ color: "blue" }}>
+                          {value * zoomValue}
+                        </Text>
+                      );
+                    }
+                  })}
+                </View>
+                <View
+                  style={{
+                    height: 200,
+                    width: 20,
+                    borderRightWidth: 1,
+                    borderColor: "red",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  {this.state.indexZoom.map((value, key) => {
+                    let zoomValue = this.state.zoomValue;
+                    if (zoomValue === 0) {
+                      return (
+                        <Text key={key} style={{ color: "red" }}>
+                          {value}
+                        </Text>
+                      );
+                    } else {
+                      return (
+                        <Text key={key} style={{ color: "red" }}>
+                          {value * zoomValue}
+                        </Text>
+                      );
+                    }
+                  })}
+                </View>
+                <Text
+                  style={{
+                    marginTop: 30,
+                    color: "white",
+                  }}
+                >
+                  PHOTO SCALE 1 :{" "}
+                  {this.state.zoomValue === 0 ? 10 : 10 / this.state.zoomValue}
+                </Text>
+              </View>
+            </View>
+          </Camera>
           <View
             style={{
               height: "35%",
@@ -149,7 +316,7 @@ export default class App extends React.Component {
                     return false;
                   } else {
                     this.setState({
-                      zoomValue: number - 1,
+                      zoomValue: number - 2,
                     });
                   }
                 }}
@@ -178,7 +345,7 @@ export default class App extends React.Component {
                     margin: 10,
                   }}
                 >
-                  <Text>{this.numberFixed()}</Text>
+                  <Text>{this.state.zoomValue} x</Text>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity
@@ -188,7 +355,7 @@ export default class App extends React.Component {
                     return false;
                   } else {
                     this.setState({
-                      zoomValue: number + 1,
+                      zoomValue: number + 2,
                     });
                   }
                 }}
